@@ -92,4 +92,45 @@
       <fileset dir="${STAGE_DIR}/WebViewerExample"/>
     </jar>
   </target>
+  <target name="create-birt-runtime-debug" depends="clean">
+    <path id="lib.path">
+      <fileset dir="${ROOT_DIR}/build/org.eclipse.birt.build">
+        <include name="lib/*.jar"/>
+        <include name="target/*.jar"/>
+      </fileset>
+    </path>
+    <taskdef name="buildJar" classname="org.eclipse.birt.build.ant.PackTask" classpathref="lib.path"/>
+    <!-- copy all birt plugins to temp folder-->
+    <copy todir="${TARGET_DIR}/org.eclipse.birt.runtime">
+      <fileset dir="${RUNTIME_DIR}/ReportEngine/platform/plugins">
+        <include name="org.eclipse.birt.*/**"/>
+        <include name="uk.co.spudsoft.birt.*/**"/>
+        <exclude name="org.eclipse.birt.api_*.jar"/>
+        <exclude name="org.eclipse.birt.report.engine_${BIRT_VERSION}*.jar"/>
+      </fileset>
+    </copy>
+    <!-- copy debug birt engine to temp folder-->
+    <copy
+            file="${ROOT_DIR}/engine/org.eclipse.birt.report.engine/target/org.eclipse.birt.report.engine-${BIRT_VERSION}-SNAPSHOT.jar"
+            tofile="${TARGET_DIR}/org.eclipse.birt.runtime/org.eclipse.birt.report.engine_${BIRT_VERSION}-SNAPSHOT.jar">
+    </copy>
+    <mkdir dir="${STAGE_DIR}/ReportEngine/lib"/>
+    <!-- create org.eclipse.birt.runtime.jar -->
+    <buildJar basedir="${TARGET_DIR}/org.eclipse.birt.runtime"
+              output="${STAGE_DIR}/ReportEngine/lib/tmp.birt.runtime.jar">
+      <manifest>
+        <attribute name="Bundle-Version" value="${BIRT_VERSION}"/>
+        <attribute name="Bundle-Name" value="BIRT Runtime SDK"/>
+        <attribute name="Bundle-SymbolicName" value="org.eclipse.birt.runtime"/>
+        <attribute name="Bundle-Vendor" value="Eclipse.org"/>
+        <attribute name="Manifest-Version" value="1.0"/>
+      </manifest>
+    </buildJar>
+    <!-- it's surprisingly hard to keep eclipse-jarsigner-plugin off jars -->
+    <zip destfile="${STAGE_DIR}/ReportEngine/lib/org.eclipse.birt.runtime_${BIRT_VERSION}.jar">
+      <zipfileset src="${STAGE_DIR}/ReportEngine/lib/tmp.birt.runtime.jar"
+                  excludes="META-INF/ECLIPSE_.*"/>
+    </zip>
+    <delete file="${STAGE_DIR}/ReportEngine/lib/tmp.birt.runtime.jar"/>
+  </target>
 </project>
