@@ -506,7 +506,7 @@ public class HTMLRenderOption extends RenderOption implements IHTMLRenderOption
 		{
 			return ( (Boolean) value ).booleanValue( );
 		}
-		return false;
+		return true;//KAE false;
 	}
 	
 	/**

@@ -38,11 +38,12 @@
 ################ END OF USAGE #########################
 
 # echo set common variables
-export BIRT_HOME=$PWD/platform
+PWD=`pwd`
+export BIRT_HOME=$PWD/../
 export WORK_DIR=$PWD
 
-echo BIRT_HOME=$BIRT_HOME
-echo WORK_DIR=$WORK_DIR
+#echo BIRT_HOME=$BIRT_HOME
+#echo WORK_DIR=$WORK_DIR
 
 if [ "$BIRT_HOME" = "" ]
 
@@ -53,6 +54,8 @@ else
 java_io_tmpdir=$WORK_DIR/tmpdir
 org_eclipse_datatools_workspacepath=$java_io_tmpdir/workspace_dtp
 mkdir -p $org_eclipse_datatools_workspacepath
+unset BIRTCLASSPATH
+for i in `ls $BIRT_HOME/ReportEngine/lib/*.jar`;do export BIRTCLASSPATH=$i:$BIRTCLASSPATH;done
 
 JAVACMD='java';
 $JAVACMD -Djava.awt.headless=true -cp "$BIRTCLASSPATH" -DBIRT_HOME="$BIRT_HOME" -Dorg.eclipse.datatools_workspacepath="$org_eclipse_datatools_workspacepath" org.eclipse.birt.report.engine.api.ReportRunner ${1+"$@"}

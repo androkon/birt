@@ -396,7 +396,7 @@ public class Report
 	 */
 	public String getRootStyleName( )
 	{
-		return rootStyleName;
+		return null;//KAE rootStyleName;
 	}
 
 	public void setRootStyleName( String rootStyleName )
